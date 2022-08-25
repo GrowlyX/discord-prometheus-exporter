@@ -12,7 +12,6 @@ import io.prometheus.client.exporter.HTTPServer
  * @author GrowlyX
  * @since 8/25/2022
  */
-@OptIn(PrivilegedIntent::class)
 suspend fun main(vararg args: String)
 {
     class AppConfiguration(parser: ArgParser)
@@ -31,8 +30,9 @@ suspend fun main(vararg args: String)
     val configuration = ArgParser(args)
         .parseInto(::AppConfiguration)
 
-    val extensible = ExtensibleBot(configuration.token) {
+    ExtensibleBot(configuration.token) {
         intents {
+            @OptIn(PrivilegedIntent::class)
             this.flags().plus(Intents.all)
         }
 
@@ -49,5 +49,7 @@ suspend fun main(vararg args: String)
         bindAddress.first(), bindAddress[1].toInt()
     )
 
-
+    Runtime.getRuntime().addShutdownHook(
+        Thread { server.close() }
+    )
 }
