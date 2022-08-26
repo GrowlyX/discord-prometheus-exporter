@@ -2,13 +2,14 @@ package io.liftgate.discord.exporter
 
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
-import dev.kord.core.Kord
-import dev.kord.core.enableEvents
-import dev.kord.gateway.Intent
-import io.liftgate.discord.exporter.extensions.configureBotStatistics
+import dev.minn.jda.ktx.jdabuilder.default
+import dev.minn.jda.ktx.jdabuilder.intents
+import io.liftgate.discord.exporter.extensions.configureWSCollectors
+import io.liftgate.discord.exporter.extensions.configureMessageCollectors
 import io.liftgate.discord.exporter.extensions.configureUserCollectors
 import io.prometheus.client.exporter.HTTPServer
-import kotlinx.coroutines.runBlocking
+import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.requests.GatewayIntent
 
 /**
  * @author GrowlyX
@@ -27,15 +28,20 @@ class AppConfiguration(parser: ArgParser)
         .default("0.0.0.0:9800")
 }
 
-suspend fun main(vararg args: String)
+fun main(vararg args: String)
 {
     val configuration = ArgParser(args)
         .parseInto(::AppConfiguration)
 
-    val kord = Kord(configuration.token)
+    val discord = default(
+        configuration.token, enableCoroutines = true
+    ) {
+        this.intents += GatewayIntent.values().toList()
+    }
 
-    kord.configureBotStatistics()
-    kord.configureUserCollectors()
+    discord.configureWSCollectors()
+    discord.configureUserCollectors()
+    discord.configureMessageCollectors()
 
     val bindAddress = configuration
         .bindAddress.split(":")
@@ -44,29 +50,18 @@ suspend fun main(vararg args: String)
         bindAddress.first(), bindAddress[1].toInt()
     )
 
-    Runtime.getRuntime().addShutdownHook(Thread {
-        runCatching {
-            runBlocking {
-                kord.logout()
+    Runtime.getRuntime()
+        .addShutdownHook(Thread {
+            runCatching {
+                discord.shutdownNow()
+            }.onFailure {
+                it.printStackTrace()
             }
-        }.onFailure {
-            it.printStackTrace()
-        }
 
-        server.close()
-    })
+            server.close()
+        })
 
-    kord.login {
-        this.intents.plus(
-            Intent.Guilds
-        )
+    discord.awaitReady()
 
-        intents {
-            this.enableEvents(
-                *registered.toTypedArray()
-            )
-        }
-
-        println("Configured discord bot and registered all extensions.")
-    }
+    println("Configured discord bot and registered all extensions.")
 }

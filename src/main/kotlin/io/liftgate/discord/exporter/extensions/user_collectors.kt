@@ -1,21 +1,19 @@
 package io.liftgate.discord.exporter.extensions
 
-import dev.kord.core.Kord
-import dev.kord.core.event.gateway.ReadyEvent
-import dev.kord.core.event.guild.MemberJoinEvent
-import dev.kord.core.event.guild.MemberLeaveEvent
-import dev.kord.core.on
-import io.liftgate.discord.exporter.AppConfiguration
+import dev.minn.jda.ktx.events.listener
 import io.liftgate.discord.exporter.prefixed
-import io.liftgate.discord.exporter.registered
 import io.prometheus.client.Gauge
 import kotlinx.coroutines.flow.count
+import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.events.ReadyEvent
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent
 
 /**
  * @author GrowlyX
  * @since 8/25/2022
  */
-suspend fun Kord.configureUserCollectors()
+fun JDA.configureUserCollectors()
 {
     val userJoinGauge = Gauge.build()
         .name("users_joined".prefixed)
@@ -27,31 +25,28 @@ suspend fun Kord.configureUserCollectors()
         .help("How many users have left the guild.")
         .register()
 
-    val userAmountCollectors = Gauge.build()
+    val userAmountGauge = Gauge.build()
         .name("users_total".prefixed)
         .help("How many users have left the guild.")
         .register()
 
-    registered += ReadyEvent::class
-    registered += MemberJoinEvent::class
-    registered += MemberLeaveEvent::class
-
-    on<MemberJoinEvent> {
+    listener<GuildMemberJoinEvent> {
         userJoinGauge.inc()
-        userAmountCollectors.inc()
+        userAmountGauge.inc()
     }
 
-    on<MemberLeaveEvent> {
+    listener<GuildMemberRemoveEvent> {
         userLeaveGauge.inc()
-        userAmountCollectors.dec()
+        userAmountGauge.dec()
     }
 
-    on<ReadyEvent> {
-        val guild = this.guilds.first()
-        val count = guild.members.count()
+    listener<ReadyEvent> {
+        val guild = it.jda.guilds.first()
 
-        userAmountCollectors.set(count.toDouble())
+        userAmountGauge.set(
+            guild.memberCount.toDouble()
+        )
     }
 
-    println("Configured user join/leave extensions!")
+    println("Configured user join/leave collectors!")
 }

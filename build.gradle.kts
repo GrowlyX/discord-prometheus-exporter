@@ -11,6 +11,7 @@ version = "0.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io/")
     maven("https://maven.kotlindiscord.com/repository/maven-public/")
 }
 
@@ -18,7 +19,9 @@ dependencies {
     api(kotlin("stdlib"))
     api("io.prometheus:simpleclient_httpserver:0.16.0")
 
-    api("dev.kord:kord-core:0.8.0-M16")
+    api("net.dv8tion:JDA:5.0.0-alpha.18")
+    api("com.github.minndevelopment:jda-ktx:0.9.4-alpha.18")
+
     api("com.xenomachina:kotlin-argparser:2.0.7")
 }
 

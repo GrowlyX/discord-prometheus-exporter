@@ -1,32 +1,32 @@
 package io.liftgate.discord.exporter.extensions
 
-import dev.kord.core.Kord
 import io.liftgate.discord.exporter.prefixed
 import io.prometheus.client.Gauge
-import kotlin.system.measureTimeMillis
+import net.dv8tion.jda.api.JDA
+import java.lang.Thread.sleep
+import kotlin.concurrent.thread
 
 /**
  * @author GrowlyX
  * @since 8/25/2022
  */
-suspend fun Kord.configureBotStatistics()
+fun JDA.configureWSCollectors()
 {
     val websocketResponseTime = Gauge.build()
         .name("websocket_ping".prefixed)
         .help("Average discord websocket heartbeat response time in millis.")
         .register()
 
-    // please tell me there's a better way to do this
-    val millis = measureTimeMillis {
-        println("Listening on ${
-            getApplicationInfo().name
-        }")
+    thread {
+        this.restPing.queue {
+            websocketResponseTime
+                .set(
+                    it.toDouble()
+                )
+        }
+
+        sleep(5000L)
     }
 
-    websocketResponseTime
-        .set(
-            millis.toDouble()
-        )
-
-    println("Configured discord bot stat extensions!")
+    println("Configured discord bot stat collectors!")
 }
