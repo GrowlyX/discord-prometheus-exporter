@@ -1,12 +1,13 @@
 package io.liftgate.discord.exporter
 
-import com.kotlindiscord.kord.extensions.ExtensibleBot
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
-import dev.kord.core.supplier.EntitySupplyStrategy
-import dev.kord.gateway.Intents
-import dev.kord.gateway.PrivilegedIntent
+import dev.kord.core.Kord
+import dev.kord.core.enableEvents
+import io.liftgate.discord.exporter.extensions.configureBotStatistics
+import io.liftgate.discord.exporter.extensions.configureUserJoinLeave
 import io.prometheus.client.exporter.HTTPServer
+import kotlinx.coroutines.runBlocking
 
 /**
  * @author GrowlyX
@@ -30,17 +31,10 @@ suspend fun main(vararg args: String)
     val configuration = ArgParser(args)
         .parseInto(::AppConfiguration)
 
-    ExtensibleBot(configuration.token) {
-        intents {
-            @OptIn(PrivilegedIntent::class)
-            this.flags().plus(Intents.all)
-        }
+    val kord = Kord(configuration.token)
 
-        cache {
-            cachedMessages = 10_000
-            defaultStrategy = EntitySupplyStrategy.cacheWithCachingRestFallback
-        }
-    }
+    kord.configureBotStatistics()
+    kord.configureUserJoinLeave()
 
     val bindAddress = configuration
         .bindAddress.split(":")
@@ -49,7 +43,25 @@ suspend fun main(vararg args: String)
         bindAddress.first(), bindAddress[1].toInt()
     )
 
-    Runtime.getRuntime().addShutdownHook(
-        Thread { server.close() }
-    )
+    Runtime.getRuntime().addShutdownHook(Thread {
+        runCatching {
+            runBlocking {
+                kord.logout()
+            }
+        }.onFailure {
+            it.printStackTrace()
+        }
+
+        server.close()
+    })
+
+    kord.login {
+        intents {
+            this.enableEvents(
+                *registered.toTypedArray()
+            )
+        }
+
+        println("Configured discord bot and registered all extensions.")
+    }
 }
