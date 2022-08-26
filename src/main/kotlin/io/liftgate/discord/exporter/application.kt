@@ -4,8 +4,9 @@ import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 import dev.kord.core.Kord
 import dev.kord.core.enableEvents
+import dev.kord.gateway.Intent
 import io.liftgate.discord.exporter.extensions.configureBotStatistics
-import io.liftgate.discord.exporter.extensions.configureUserJoinLeave
+import io.liftgate.discord.exporter.extensions.configureUserCollectors
 import io.prometheus.client.exporter.HTTPServer
 import kotlinx.coroutines.runBlocking
 
@@ -13,28 +14,28 @@ import kotlinx.coroutines.runBlocking
  * @author GrowlyX
  * @since 8/25/2022
  */
+class AppConfiguration(parser: ArgParser)
+{
+    val token by parser.storing(
+        "--token", help = "Discord bot token."
+    )
+
+    val bindAddress by parser
+        .storing(
+            "--addr", help = "Address on which the HTTP server will listen ojn."
+        )
+        .default("0.0.0.0:9800")
+}
+
 suspend fun main(vararg args: String)
 {
-    class AppConfiguration(parser: ArgParser)
-    {
-        val token by parser.storing(
-            "--token", help = "Discord bot token."
-        )
-
-        val bindAddress by parser
-            .storing(
-                "--addr", help = "Address on which the HTTP server will listen ojn."
-            )
-            .default("0.0.0.0:9800")
-    }
-
     val configuration = ArgParser(args)
         .parseInto(::AppConfiguration)
 
     val kord = Kord(configuration.token)
 
     kord.configureBotStatistics()
-    kord.configureUserJoinLeave()
+    kord.configureUserCollectors()
 
     val bindAddress = configuration
         .bindAddress.split(":")
@@ -56,6 +57,10 @@ suspend fun main(vararg args: String)
     })
 
     kord.login {
+        this.intents.plus(
+            Intent.Guilds
+        )
+
         intents {
             this.enableEvents(
                 *registered.toTypedArray()
