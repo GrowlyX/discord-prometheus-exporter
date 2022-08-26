@@ -2,8 +2,8 @@ package io.liftgate.discord.exporter.extensions
 
 import dev.minn.jda.ktx.events.listener
 import io.liftgate.discord.exporter.prefixed
+import io.prometheus.client.Counter
 import io.prometheus.client.Gauge
-import kotlinx.coroutines.flow.count
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent
@@ -15,12 +15,12 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent
  */
 fun JDA.configureUserCollectors()
 {
-    val userJoinGauge = Gauge.build()
+    val userJoinGauge = Counter.build()
         .name("users_joined".prefixed)
         .help("How many users have joined the guild.")
         .register()
 
-    val userLeaveGauge = Gauge.build()
+    val userLeaveGauge = Counter.build()
         .name("users_left".prefixed)
         .help("How many users have left the guild.")
         .register()

@@ -4,11 +4,11 @@ import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 import dev.minn.jda.ktx.jdabuilder.default
 import dev.minn.jda.ktx.jdabuilder.intents
-import io.liftgate.discord.exporter.extensions.configureWSCollectors
+import io.liftgate.discord.exporter.extensions.configureRestCollectors
 import io.liftgate.discord.exporter.extensions.configureMessageCollectors
+import io.liftgate.discord.exporter.extensions.configureInviteCollectors
 import io.liftgate.discord.exporter.extensions.configureUserCollectors
 import io.prometheus.client.exporter.HTTPServer
-import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.requests.GatewayIntent
 
 /**
@@ -39,8 +39,9 @@ fun main(vararg args: String)
         this.intents += GatewayIntent.values().toList()
     }
 
-    discord.configureWSCollectors()
+    discord.configureRestCollectors()
     discord.configureUserCollectors()
+    discord.configureInviteCollectors()
     discord.configureMessageCollectors()
 
     val bindAddress = configuration

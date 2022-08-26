@@ -2,7 +2,7 @@ package io.liftgate.discord.exporter.extensions
 
 import dev.minn.jda.ktx.events.listener
 import io.liftgate.discord.exporter.prefixed
-import io.prometheus.client.Gauge
+import io.prometheus.client.Counter
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
@@ -14,17 +14,17 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent
  */
 fun JDA.configureMessageCollectors()
 {
-    val messagesSentGauge = Gauge.build()
+    val messagesSentGauge = Counter.build()
         .name("messages_sent".prefixed)
         .help("Amount of messages which have been sent.")
         .register()
 
-    val messagesUpdatedGauge = Gauge.build()
+    val messagesUpdatedGauge = Counter.build()
         .name("messages_updated".prefixed)
         .help("Amount of messages which have been updated.")
         .register()
 
-    val messagesDeletedGauge = Gauge.build()
+    val messagesDeletedGauge = Counter.build()
         .name("messages_deleted".prefixed)
         .help("Amount of messages which have been deleted.")
         .register()
