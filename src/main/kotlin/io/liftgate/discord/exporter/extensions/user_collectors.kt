@@ -27,7 +27,7 @@ fun JDA.configureUserCollectors()
 
     val userAmountGauge = Gauge.build()
         .name("users_total".prefixed)
-        .help("How many users have left the guild.")
+        .help("How many users are in the guild.")
         .register()
 
     listener<GuildMemberJoinEvent> {

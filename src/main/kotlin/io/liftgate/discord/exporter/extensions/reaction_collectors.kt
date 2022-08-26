@@ -30,5 +30,5 @@ fun JDA.configureReactionCollectors()
         reactionRemovalCounter.inc()
     }
 
-    println("Configured user join/leave collectors!")
+    println("Configured reaction collectors!")
 }

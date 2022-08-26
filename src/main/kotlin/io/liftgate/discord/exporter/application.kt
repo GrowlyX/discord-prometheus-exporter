@@ -9,6 +9,7 @@ import io.liftgate.discord.exporter.extensions.configureMessageCollectors
 import io.liftgate.discord.exporter.extensions.configureInviteCollectors
 import io.liftgate.discord.exporter.extensions.configureReactionCollectors
 import io.liftgate.discord.exporter.extensions.configureUserCollectors
+import io.liftgate.discord.exporter.extensions.configureVoiceChannelCollectors
 import io.prometheus.client.exporter.HTTPServer
 import net.dv8tion.jda.api.requests.GatewayIntent
 
@@ -41,10 +42,11 @@ fun main(vararg args: String)
     }
 
     discord.configureRestCollectors()
-    discord.configureRestCollectors()
     discord.configureReactionCollectors()
+    discord.configureUserCollectors()
     discord.configureInviteCollectors()
     discord.configureMessageCollectors()
+    discord.configureVoiceChannelCollectors()
 
     val bindAddress = configuration
         .bindAddress.split(":")

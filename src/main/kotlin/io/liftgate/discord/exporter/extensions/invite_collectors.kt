@@ -21,5 +21,5 @@ fun JDA.configureInviteCollectors()
         userInviteGauge.inc()
     }
 
-    println("Configured user join/leave collectors!")
+    println("Configured invite collectors!")
 }
