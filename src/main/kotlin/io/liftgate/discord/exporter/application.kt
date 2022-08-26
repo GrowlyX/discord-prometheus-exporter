@@ -7,6 +7,7 @@ import dev.minn.jda.ktx.jdabuilder.intents
 import io.liftgate.discord.exporter.extensions.configureRestCollectors
 import io.liftgate.discord.exporter.extensions.configureMessageCollectors
 import io.liftgate.discord.exporter.extensions.configureInviteCollectors
+import io.liftgate.discord.exporter.extensions.configureReactionCollectors
 import io.liftgate.discord.exporter.extensions.configureUserCollectors
 import io.prometheus.client.exporter.HTTPServer
 import net.dv8tion.jda.api.requests.GatewayIntent
@@ -40,7 +41,8 @@ fun main(vararg args: String)
     }
 
     discord.configureRestCollectors()
-    discord.configureUserCollectors()
+    discord.configureRestCollectors()
+    discord.configureReactionCollectors()
     discord.configureInviteCollectors()
     discord.configureMessageCollectors()
 
