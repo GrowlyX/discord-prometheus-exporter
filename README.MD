@@ -1,9 +1,13 @@
 # Discord Prometheus Exporter
-Simple metrics exporter HTTP server for Prometheus.
+Simple metrics exporter HTTP server for Prometheus meant to be used for private Discord servers.
 
-## Metrics Tracked
+Thanks to the creator of [promcord](https://github.com/nimarion/promcord) for the original idea! This project is meant to be a simpler replacement for it.
+
+## Metrics tracked
  - **Application:**
    - Discord websocket response time
+ - **Guild:**
+   - The active boost count.
  - **Voice channels:**
    - How many joins there have been
    - How many users are in a voice channel

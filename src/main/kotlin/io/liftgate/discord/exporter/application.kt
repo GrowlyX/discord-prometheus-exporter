@@ -4,6 +4,7 @@ import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 import dev.minn.jda.ktx.jdabuilder.default
 import dev.minn.jda.ktx.jdabuilder.intents
+import io.liftgate.discord.exporter.extensions.configureGuildCollectors
 import io.liftgate.discord.exporter.extensions.configureRestCollectors
 import io.liftgate.discord.exporter.extensions.configureMessageCollectors
 import io.liftgate.discord.exporter.extensions.configureInviteCollectors
@@ -41,6 +42,7 @@ fun main(vararg args: String)
         this.intents += GatewayIntent.values().toList()
     }
 
+    discord.configureGuildCollectors()
     discord.configureRestCollectors()
     discord.configureReactionCollectors()
     discord.configureUserCollectors()
