@@ -22,6 +22,8 @@ Thanks to the creator of [promcord](https://github.com/nimarion/promcord) for th
    - How many invites have been created
    - How many invites there are in total
 
+All metrics are prefixed with `discord_server_` in the final Prometheus format.
+
 ## Build & Run
 Run `./gradlew cleanBuild`. The final jar will be available in the `build/libs` directory.
 
@@ -30,4 +32,4 @@ Discord prometheus exporter requires you to pass through your Discord bot token 
  - `--addr` _(default: `0.0.0.0:9800`)_: the address our HTTP server will bind to
 
 # Dashboard
-We do not have a dashboard template yet :(. Come back later!
+😔 We do not have a dashboard template yet. Come back later!
