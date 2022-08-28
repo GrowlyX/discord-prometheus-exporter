@@ -30,5 +30,5 @@ fun JDA.configureGuildCollectors()
         )
     }
 
-    println("Configured voice channel collectors!")
+    println("Configured guild collectors!")
 }
