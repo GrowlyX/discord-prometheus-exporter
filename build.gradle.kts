@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    application
     kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    application
 }
 
 group = "io.liftgate.discord.exporter"
@@ -26,15 +26,16 @@ dependencies {
 }
 
 tasks.withType<Jar> {
-    this.archiveFileName.set("discord-prometheus-exporter.jar")
+    archiveFileName.set("discord-prometheus-exporter.jar")
 }
 
 application {
-    this.mainClass.set("io.liftgate.discord.exporter.ApplicationKt")
+    mainClass.set("io.liftgate.discord.exporter.ApplicationKt")
 }
 
 tasks.withType<KotlinCompile> {
-    this.kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.javaParameters = true
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 tasks.register<GradleBuild>("cleanBuild") {
