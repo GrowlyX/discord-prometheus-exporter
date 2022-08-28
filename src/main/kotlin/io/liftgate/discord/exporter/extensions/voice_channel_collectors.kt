@@ -5,8 +5,10 @@ import io.liftgate.discord.exporter.prefixed
 import io.prometheus.client.Counter
 import io.prometheus.client.Gauge
 import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent
 
 /**
  * @author GrowlyX
@@ -14,7 +16,6 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
  */
 fun JDA.configureVoiceChannelCollectors()
 {
-    // TODO: implement
     val voiceChannelGauge = Gauge.build()
         .name("voice_channel_active".prefixed)
         .help("How many voice voice channel participants there are.")
@@ -27,6 +28,21 @@ fun JDA.configureVoiceChannelCollectors()
 
     listener<GuildVoiceJoinEvent> {
         voiceChannelEntered.inc()
+        voiceChannelGauge.inc()
+    }
+
+    listener<GuildVoiceLeaveEvent> {
+        voiceChannelGauge.dec()
+    }
+
+    listener<ReadyEvent> {
+        val guild = it.jda.guilds.first()
+
+        voiceChannelGauge.set(
+            guild.voiceChannels
+                .sumOf { voice -> voice.members.size }
+                .toDouble()
+        )
     }
 
     println("Configured voice channel collectors!")
