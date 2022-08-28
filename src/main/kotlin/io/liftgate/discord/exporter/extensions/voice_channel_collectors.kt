@@ -6,7 +6,6 @@ import io.prometheus.client.Counter
 import io.prometheus.client.Gauge
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.ReadyEvent
-import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent
 
